@@ -7,15 +7,14 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncConnection
 from alembic import context
 
-from app.categories.models import Category
 from app.database import Base
-from app.users.models import User
-from app.goods.models import Good
-from app.categories.models import Category
-from app.rentals.models import Rental
+from app.users.models import Users
+from app.categories.models import Categories
+from app.goods.models import Goods
+from app.rentals.models import Rentals
 # Загружаем конфигурацию Alembic
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL + "?async_fallback=True")
 # Настройка логирования
 fileConfig(config.config_file_name)
 

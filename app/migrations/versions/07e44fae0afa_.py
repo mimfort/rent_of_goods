@@ -1,8 +1,8 @@
-"""Fix stpd failed
+"""empty message
 
-Revision ID: 3e9d7f3b4be9
-Revises: 99eefb4adf1f
-Create Date: 2024-11-23 22:53:05.092200
+Revision ID: 07e44fae0afa
+Revises: 
+Create Date: 2024-11-24 01:00:50.001111
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3e9d7f3b4be9'
-down_revision: Union[str, None] = '99eefb4adf1f'
+revision: str = '07e44fae0afa'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -30,21 +30,19 @@ def upgrade() -> None:
     op.create_index(op.f('ix_categories_name'), 'categories', ['name'], unique=True)
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=100), nullable=True),
-    sa.Column('email', sa.String(length=100), nullable=True),
-    sa.Column('hashed_password', sa.String(length=200), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('name', sa.String(length=30), nullable=False),
+    sa.Column('email', sa.String(length=50), nullable=False),
+    sa.Column('hashed_password', sa.String(length=100), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
     )
-    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
-    op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
-    op.create_index(op.f('ix_users_name'), 'users', ['name'], unique=False)
     op.create_table('goods',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=100), nullable=True),
-    sa.Column('description', sa.String(length=200), nullable=True),
-    sa.Column('price_per_day', sa.Integer(), nullable=True),
-    sa.Column('available', sa.Boolean(), nullable=True),
     sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('description', sa.String(length=200), nullable=True),
+    sa.Column('price_per_day', sa.Integer(), nullable=False),
+    sa.Column('amount', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -52,11 +50,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_goods_name'), 'goods', ['name'], unique=False)
     op.create_table('rentals',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('good_id', sa.Integer(), nullable=True),
-    sa.Column('date_from', sa.DateTime(), nullable=True),
-    sa.Column('date_to', sa.DateTime(), nullable=True),
-    sa.Column('expired', sa.Boolean(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('good_id', sa.Integer(), nullable=False),
+    sa.Column('date_from', sa.DateTime(), nullable=False),
+    sa.Column('date_to', sa.DateTime(), nullable=False),
+    sa.Column('expired', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['good_id'], ['goods.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -76,9 +74,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_goods_name'), table_name='goods')
     op.drop_index(op.f('ix_goods_id'), table_name='goods')
     op.drop_table('goods')
-    op.drop_index(op.f('ix_users_name'), table_name='users')
-    op.drop_index(op.f('ix_users_id'), table_name='users')
-    op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_index(op.f('ix_categories_name'), table_name='categories')
     op.drop_index(op.f('ix_categories_id'), table_name='categories')

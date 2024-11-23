@@ -1,17 +1,17 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, ForeignKey, DateTime, Boolean
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.database import Base
 from datetime import date
 
-class Rental(Base):
+class Rentals(Base):
     __tablename__ = "rentals"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    user_id: int = Column(Integer, ForeignKey("users.id"), index=True)
-    good_id: int = Column(Integer, ForeignKey("goods.id"), index=True)
-    date_from: date = Column(DateTime)
-    date_to: date = Column(DateTime)
-    expired: bool = Column(Boolean, default=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True)
+    good_id: Mapped[int] = mapped_column(Integer, ForeignKey("goods.id"), index=True)
+    date_from: Mapped[date] = mapped_column(DateTime)
+    date_to: Mapped[date] = mapped_column(DateTime)
+    expired: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    user = relationship("User", back_populates="rentals")
-    good = relationship("Good", back_populates="rentals")
+    user = relationship("Users", back_populates="rentals")
+    good = relationship("Goods", back_populates="rentals")

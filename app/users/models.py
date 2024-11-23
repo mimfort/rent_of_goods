@@ -1,13 +1,13 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.database import Base
 
-class User(Base):
+class Users(Base):
     __tablename__ = "users"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    name: str = Column(String(100), index=True)
-    email: str = Column(String(100), unique=True, index=True)
-    hashed_password: str = Column(String(200))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(30))
+    email: Mapped[str] = mapped_column(String(50), unique=True)
+    hashed_password: Mapped[str] = mapped_column(String(100))
 
-    rentals = relationship("Rental", back_populates="user")
+    rentals = relationship("Rentals", back_populates="users")
