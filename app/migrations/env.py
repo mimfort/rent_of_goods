@@ -4,8 +4,13 @@ from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncConnection
 from alembic import context
-from app.database import Base  # Убедитесь, что ваш Base импортирован
 
+from app.categories.models import Category
+from app.database import Base
+from app.users.models import User
+from app.goods.models import Good
+from app.categories.models import Category
+from app.rentals.models import Rental
 # Загружаем конфигурацию Alembic
 config = context.config
 
@@ -14,7 +19,7 @@ fileConfig(config.config_file_name)
 
 # Указываем метаданные
 target_metadata = Base.metadata
-
+print(Base.metadata.tables.keys())
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode."""
