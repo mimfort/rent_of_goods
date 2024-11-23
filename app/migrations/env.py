@@ -1,6 +1,8 @@
 import asyncio
 from logging.config import fileConfig
 
+from app.config import settings
+
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncConnection
 from alembic import context
@@ -13,7 +15,7 @@ from app.categories.models import Category
 from app.rentals.models import Rental
 # Загружаем конфигурацию Alembic
 config = context.config
-
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 # Настройка логирования
 fileConfig(config.config_file_name)
 
