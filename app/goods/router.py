@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from app.config import settings
+
 router = APIRouter(
     prefix="/goods",
     tags=["Товары"]
@@ -8,4 +10,4 @@ router = APIRouter(
 
 @router.get("/hello")
 async def say_hello():
-    return "Hello"
+    return settings.DATABASE_URL
