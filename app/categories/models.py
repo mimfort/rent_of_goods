@@ -11,4 +11,4 @@ class Categories(Base):
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
-    goods = relationship("Goods", back_populates="categories") 
+    #goods = relationship("Goods", back_populates="categories")

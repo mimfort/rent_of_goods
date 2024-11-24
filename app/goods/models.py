@@ -15,4 +15,4 @@ class Goods(Base):
     amount: Mapped[int] = mapped_column(Integer)
     
     
-    category = relationship("Categories", back_populates="goods")
+    #category = relationship("Categories", back_populates="goods")

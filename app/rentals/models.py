@@ -13,5 +13,5 @@ class Rentals(Base):
     date_to: Mapped[date] = mapped_column(DateTime)
     expired: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    user = relationship("Users", back_populates="rentals")
-    good = relationship("Goods", back_populates="rentals")
+    #user = relationship("Users", back_populates="rentals")
+    #good = relationship("Goods", back_populates="rentals")

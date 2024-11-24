@@ -12,7 +12,7 @@ from app.users.utils import hash_password, verify_password
 async def register_user_service(user:UserCreate,db : AsyncSession) -> UserResponse:
     res = select(Users).where(Users.email == user.email)
     result = await db.execute(res)
-    existing_user = result.mappings()
+    existing_user = result.mappings().first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Почта уже занята!")
     hashed_password = hash_password(user.password)
@@ -25,7 +25,8 @@ async def register_user_service(user:UserCreate,db : AsyncSession) -> UserRespon
 
 async def login_user_service(user: UserLogin, db: AsyncSession) -> dict:
     result = await db.execute(select(Users).where(Users.email == user.email))
-    db_user = result.mappings()
+    db_user = result.scalars().first()
+    print(db_user)
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Ошибка авторизации")
     access_token = create_access_token(data={"sub": db_user.email})

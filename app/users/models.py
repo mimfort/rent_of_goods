@@ -10,4 +10,4 @@ class Users(Base):
     email: Mapped[str] = mapped_column(String(50), unique=True)
     hashed_password: Mapped[str] = mapped_column(String(100))
 
-    rentals = relationship("Rentals", back_populates="users")
+    #rentals = relationship("Rentals", back_populates="users")
