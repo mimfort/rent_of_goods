@@ -1,5 +1,5 @@
 
-from fastapi import HTTPException
+from fastapi import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,11 +24,12 @@ async def register_user_service(user:UserCreate,db : AsyncSession) -> UserRespon
     return UserResponse.from_orm(new_user)
 
 
-async def login_user_service(user: UserLogin, db: AsyncSession) -> dict:
+async def login_user_service(response: Response,user: UserLogin, db: AsyncSession) -> dict:
     result = await db.execute(select(Users).where(Users.email == user.email))
     db_user = result.scalars().first()
     print(db_user)
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise AuthenticationError
     access_token = create_access_token(data={"sub": db_user.email})
+    response.set_cookie("access_token", access_token, httponly=True)
     return {"access_token": access_token, "token_type": "bearer"}

@@ -1,6 +1,6 @@
 
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from app.database import async_session_maker
 from app.users.schemas import UserResponse, UserCreate, UserLogin, TokenResponse
@@ -18,6 +18,6 @@ async def register_user(user:UserCreate):
 
 
 @router.post("/login",response_model=TokenResponse)
-async def login(user:UserLogin):
+async def login(response: Response,user:UserLogin):
     async with async_session_maker() as session:
-        return await login_user_service(user,session)
+        return await login_user_service(response,user,session)
