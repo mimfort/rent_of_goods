@@ -21,3 +21,10 @@ async def register_user(user:UserCreate):
 async def login(response: Response,user:UserLogin):
     async with async_session_maker() as session:
         return await login_user_service(response,user,session)
+
+
+@router.post("/logout", response_model= bool)
+async def logout(response : Response):
+    async with async_session_maker() as session:
+        response.delete_cookie("access_token",httponly=True)
+        return True
