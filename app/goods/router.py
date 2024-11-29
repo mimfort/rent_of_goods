@@ -1,6 +1,6 @@
 from fastapi import APIRouter
+from typing import Literal
 
-from app.config import settings
 from app.goods.dao import GoodsDAO
 from app.goods.schemas import AddGood
 
@@ -21,3 +21,8 @@ async def add_good(good_info: AddGood):
     new_good = GoodsDAO.add(**good_info)
     
     return new_good
+
+@router.post("/good/rent/{status}")
+async def good_rent_over(good_id: int, status: Literal["START", "OVER"]):
+    good = GoodsDAO.update_rent_good(good_id) 
+    # доделать обновление(забираем пользователя проверяем в зависимости от статуса какое действие делаем и выполняем обращение к бд) 
