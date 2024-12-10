@@ -15,7 +15,7 @@ async def get_category_by_id(category_id: int):
 
 @router.post("/add_category")
 async def add_category(name: str, description: str = ''):
-    res = CategoriesDAO.add(name=name, description=description)
+    res = await CategoriesDAO.add(name=name, description=description)
     
     return res
 
