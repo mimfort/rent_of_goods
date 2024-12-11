@@ -16,13 +16,22 @@ async def get_good(good_id: int):
     return good
 
 
-@router.post("add_good")
+@router.post("/add_good")
 async def add_good(good_info: AddGood):
-    new_good = GoodsDAO.add(**good_info)
+    try:
+        new_good = await GoodsDAO.add(**dict(good_info))
+    except Exception:
+        return "Ошибка"
     
     return new_good
 
 @router.post("/good/rent/{status}")
-async def good_rent_over(good_id: int, status: Literal["START", "OVER"]):
-    good = GoodsDAO.update_rent_good(good_id) 
-    # доделать обновление(забираем пользователя проверяем в зависимости от статуса какое действие делаем и выполняем обращение к бд) 
+async def good_rent_status(good_id: int, status: Literal["START", "OVER"]):
+    good_amount = await GoodsDAO.find_by_id(good_id)
+
+    if status == "START" and good_amount.amount > 0:
+        good = await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount - 1)
+    else:
+        good = await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount + 1)
+        
+    return True

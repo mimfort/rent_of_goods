@@ -5,10 +5,6 @@ from app.users.router import router as users_router
 from app.categories.router import router as categories_router
 app = FastAPI()
 
-@app.on_event("startup")
-async def create_tables():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 app.include_router(goods_router)
 app.include_router(users_router)

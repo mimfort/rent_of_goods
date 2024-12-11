@@ -45,6 +45,7 @@ class BaseDAO:
             
             if query is not None:
                 updated = await session.execute(query)
+                
                 await session.commit()
                 
                 return updated
