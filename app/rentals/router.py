@@ -16,6 +16,7 @@ router = APIRouter(
 async def get_my_rents(user: Users = Depends(get_current_user)):
     rents = await RentalsDAO.find_all(user_id=user.id)
     
+    return rents
     
 @router.post("/add_rent")
 async def add_rent(good_id: int,
@@ -44,3 +45,10 @@ async def add_rent(good_id: int,
         await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount - 1)
     else:
         raise LackOfGoodException
+
+@router.delete("/delete_rent/{rent_id}")
+async def delete_rent(rent_id: int, user: Users = Depends(get_current_user)):
+    if user:
+        await GoodsDAO.delete(id=rent_id)
+    
+    raise TokenAbsentException

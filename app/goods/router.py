@@ -1,8 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import Literal
 
 from app.goods.dao import GoodsDAO
 from app.goods.schemas import AddGood
+from app.users.models import Users
+from app.exceptions import TokenAbsentException
+from app.users.dependencies import get_current_user
+
 
 router = APIRouter(
     prefix="/goods",
@@ -35,3 +39,11 @@ async def good_rent_status(good_id: int, status: Literal["START", "OVER"]):
         good = await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount + 1)
         
     return True
+
+@router.delete("/good/delete/{good_id}")
+async def delete_good(good_id: int, user: Users = Depends(get_current_user)):
+    if user:
+        await GoodsDAO.delete(id=good_id)
+        return True
+    
+    raise TokenAbsentException
