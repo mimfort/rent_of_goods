@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str
     REDIS_PORT: int
-    
+    HASH_ALGO: str
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()
