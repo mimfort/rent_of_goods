@@ -11,7 +11,6 @@ router = APIRouter(
     prefix="/rent",
     tags=["Аренда"]
 )
-
 @router.get("/my_rents")
 async def get_my_rents(user: Users = Depends(get_current_user)):
     rents = await RentalsDAO.find_all(user_id=user.id)
