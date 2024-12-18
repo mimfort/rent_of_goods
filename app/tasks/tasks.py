@@ -7,11 +7,12 @@ from app.tasks.email_templates import create_booking_confirmation_template
 
 
 @celery.task
-def email_booking_confirm(
-    booking: dict,
+def email_rent_confirm(
+    rent: dict,
+    good: dict,
     email_to: EmailStr
 ):
-    msg_content = create_booking_confirmation_template(booking, email_to)
+    msg_content = create_booking_confirmation_template(rent, good, email_to)
     
     with smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT) as server:
         server.login(settings.SMTP_USER, settings.SMTP_PASS)

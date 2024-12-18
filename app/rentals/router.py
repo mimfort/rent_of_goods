@@ -1,11 +1,15 @@
 from fastapi import APIRouter, Depends
 from datetime import date
+from pydantic import TypeAdapter
 
 from app.users.models import Users
 from app.exceptions import TokenAbsentException, IncorrectDateException, LackOfGoodException
 from app.users.dependencies import get_current_user
 from app.rentals.dao import RentalsDAO
 from app.goods.dao import GoodsDAO
+from app.rentals.schemas import SRent
+from app.goods.schemas import SGood
+from app.tasks.tasks import email_rent_confirm
 
 router = APIRouter(
     prefix="/rent",
@@ -44,13 +48,19 @@ async def add_rent(good_id: int,
             expired=expired
         )
         
-        await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount - 1)
+        upd_good = await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount - 1)
+        
+        rent_for_celery = TypeAdapter(SRent).validate_python(new_rent).model_dump()
+        
+        good_for_celery = TypeAdapter(SGood).validate_python(upd_good).model_dump()
+        
+        email_rent_confirm.delay(rent_for_celery, good_for_celery, user.email)
     else:
         raise LackOfGoodException
 
 @router.delete("/delete_rent/{rent_id}")
 async def delete_rent(rent_id: int, user: Users = Depends(get_current_user)):
     if user:
-        await GoodsDAO.delete(id=rent_id)
+        await RentalsDAO.delete(id=rent_id)
     
     raise TokenAbsentException
