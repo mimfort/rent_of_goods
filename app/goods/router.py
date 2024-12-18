@@ -16,6 +16,8 @@ router = APIRouter(
 @router.get("/good/{good_id}")
 async def get_good(good_id: int):
     good = await GoodsDAO.find_by_id(good_id)
+    if not good:
+        return "Такого товара нет"
     
     return good
 

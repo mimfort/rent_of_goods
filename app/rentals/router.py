@@ -15,9 +15,11 @@ router = APIRouter(
 @router.get("/my_rents")
 async def get_my_rents(user: Users = Depends(get_current_user)):
     rents = await RentalsDAO.find_all(user_id=user.id)
+    if not rents:
+        return "У вас нет арендованных товаров"
     
     return rents
-    
+
 @router.post("/add_rent")
 async def add_rent(good_id: int,
                    date_from: date,
