@@ -62,5 +62,5 @@ async def add_rent(good_id: int,
 async def delete_rent(rent_id: int, user: Users = Depends(get_current_user)):
     if user:
         await RentalsDAO.delete(id=rent_id)
-    
-    raise TokenAbsentException
+    else:
+        raise TokenAbsentException
