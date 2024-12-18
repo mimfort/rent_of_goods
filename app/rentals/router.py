@@ -50,17 +50,29 @@ async def add_rent(good_id: int,
         
         upd_good = await GoodsDAO.update(id=good_id, field="amount", data=good_amount.amount - 1)
         
-        rent_for_celery = TypeAdapter(SRent).validate_python(new_rent).model_dump()
+        rent_for_celery = {
+            "date_from": new_rent.date_from,
+            "date_to": new_rent.date_to
+        }
         
-        good_for_celery = TypeAdapter(SGood).validate_python(upd_good).model_dump()
+        upd_for_celery = {
+            "name": upd_good.name,
+            "price_per_day": upd_good.price_per_day
+        }
+        email_rent_confirm.delay(rent_for_celery, upd_for_celery, user.email)
         
-        email_rent_confirm.delay(rent_for_celery, good_for_celery, user.email)
+        return new_rent
     else:
         raise LackOfGoodException
 
 @router.delete("/delete_rent/{rent_id}")
 async def delete_rent(rent_id: int, user: Users = Depends(get_current_user)):
     if user:
+        rent = await RentalsDAO.find_by_id(rent_id)
+
         await RentalsDAO.delete(id=rent_id)
+
+        good = await GoodsDAO.find_by_id(rent.good_id)
+        await GoodsDAO.update(rent.good_id, "amount", good.amount + 1)
     else:
         raise TokenAbsentException

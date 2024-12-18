@@ -48,7 +48,7 @@ class BaseDAO:
                 
                 await session.commit()
                 
-                return updated
+                return updated.scalar()
             else:
                 return None
             
